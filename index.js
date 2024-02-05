@@ -104,31 +104,34 @@ require([
             elevationInfo: {
               mode: "on-the-ground",
             },
-            /*            renderer: new UniqueValueRenderer({
-              type: "unique-value",  // autocasts as new UniqueValueRenderer()
+            renderer: new UniqueValueRenderer({
               field: "EclType_simple",
-              defaultSymbol: { type: "simple-fill" },  // autocasts as new SimpleFillSymbol()
-              uniqueValueInfos: [{
-                value: "Total",
-                symbol: {
-                  type: "simple-fill",  // autocasts as new SimpleFillSymbol()
-                  color: "red"
-                }
-              }, {
-                value: "Hybrid",
-                symbol: {
-                  type: "simple-fill",  // autocasts as new SimpleFillSymbol()
-                  color: "orange"
-                }
-              }, {
-                value: "Annular",
-                symbol: {
-                  type: "simple-fill",  // autocasts as new SimpleFillSymbol()
-                  color: "blue"
-                }
-              }]
-            })
-*/
+              defaultSymbol: { type: "simple-fill" }, // autocasts as new SimpleFillSymbol()
+              uniqueValueInfos: [
+                {
+                  value: "Total",
+                  symbol: {
+                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                    color: "#ff7700",
+                  },
+                },
+                {
+                  value: "Hybrid",
+                  symbol: {
+                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                    color: "#f5a61c",
+                  },
+                },
+                {
+                  value: "Annular",
+                  symbol: {
+                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                    color: "#8f6feb",
+                  },
+                },
+              ],
+            }),
+            /*
             renderer: new SimpleRenderer({
               symbol: new PolygonSymbol3D({
                 symbolLayers: [
@@ -140,6 +143,7 @@ require([
                 ],
               }),
             }),
+            */
           }),
           new GraphicsLayer({
             // This layer will be used to simulate selection
