@@ -113,6 +113,11 @@ require([
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
                     color: "#ff7700",
+                    outline: {
+                      // autocasts as new SimpleLineSymbol()
+                      color: "#ff7700",
+                      width: 0,
+                    },
                   },
                 },
                 {
@@ -120,6 +125,11 @@ require([
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
                     color: "#f5a61c",
+                    outline: {
+                      // autocasts as new SimpleLineSymbol()
+                      color: "#f5a61c",
+                      width: 0,
+                    },
                   },
                 },
                 {
@@ -127,6 +137,11 @@ require([
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
                     color: "#8f6feb",
+                    outline: {
+                      // autocasts as new SimpleLineSymbol()
+                      color: "#8f6feb",
+                      width: 0,
+                    },
                   },
                 },
               ],
