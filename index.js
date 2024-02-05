@@ -112,7 +112,8 @@ require([
                   value: "Total",
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "#ff7700",
+                    color: "rgba(255, 119, 0, 0.5)",
+                    //color: "#ff7700",
                     outline: {
                       // autocasts as new SimpleLineSymbol()
                       color: "#ff7700",
@@ -124,7 +125,8 @@ require([
                   value: "Hybrid",
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "#f5a61c",
+                    color: "rgba(245, 166, 28, 0.5)",
+                    //color: "#f5a61c",
                     outline: {
                       // autocasts as new SimpleLineSymbol()
                       color: "#f5a61c",
@@ -136,7 +138,8 @@ require([
                   value: "Annular",
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "#8f6feb",
+                    color: "rgba(143, 111, 235, 0.5)",
+                    //color: "#8f6feb",
                     outline: {
                       // autocasts as new SimpleLineSymbol()
                       color: "#8f6feb",
