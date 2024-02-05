@@ -359,6 +359,7 @@ require([
           "Saro", // Saros Cycle
           "Gamma", // Gamma
           "DT", // Delta-T (seconds)
+          "EclType_simple", // Simplified classification
         ],
         orderByFields: ["Date"],
         outSpatialReference: new SpatialReference({
@@ -402,6 +403,12 @@ require([
         .scaleLinear()
         .domain([DURATION_MIN, DURATION_MAX])
         .range([height - margin.top - margin.bottom, 0]);
+
+      // Define colors for chart
+      var color = d3
+        .scaleOrdinal()
+        .domain(["Total", "Hybrid", "Annular"])
+        .range(["#ff7700", "#f5a61c", "#8f6feb"]);
 
       // Define axises
       var xaxis = d3.axisBottom(x).tickFormat(d3.format("d"));
@@ -513,6 +520,9 @@ require([
           return y(d.attributes.DurationSeconds);
         })
         .attr("r", 3)
+        .style("fill", function (d) {
+          return color(d.attributes.EclType_simple);
+        })
         .on("mouseenter", function (d) {
           // Highlight dot
           d3.select(this).classed("hover", true).attr("r", 5);
