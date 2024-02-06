@@ -80,7 +80,7 @@ require([
         right: 0,
         bottom: 200,
       },
-      center: [-90, 12], // Center the globe around Europe
+      center: [-90, 12], // Center the globe
       environment: {
         // Disable lighting and stars
         lighting: {
@@ -545,6 +545,15 @@ require([
         .style("fill", function (d) {
           return color(d.attributes.EclType_simple);
         })
+        // Add a brush
+        .call(
+          d3
+            .brushX() // Add the brush feature using the d3.brush function
+            .extent([
+              [0, 0],
+              [margin.left, margin.top],
+            ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+        )
         .on("mouseenter", function (d) {
           // Highlight dot
           d3.select(this).classed("hover", true).attr("r", 5);
@@ -710,7 +719,9 @@ require([
           );
           break;
         case "H":
-          $("#panel-title").html("Hybrid Solar Eclipse (total-annular-total)");
+          $("#panel-title").html(
+            "Hybrid Solar Eclipse (annular-total-annular)"
+          );
           break;
         case "H2":
           $("#panel-title").html(
@@ -756,24 +767,27 @@ require([
           break;
       }
 
-      // Update attributes in table
+      // Update attributes in panel
+      const options = { timeZone: "UTC", timeZoneName: "short" };
       $("#panel .value:eq(0)").html(
-        new Date(graphic.attributes.Date).toLocaleDateString()
+        new Date(graphic.attributes.Date).toLocaleDateString("en-US", options)
       );
-      $("#panel .value:eq(1)").html(
-        new Date(graphic.attributes.TimeGE).toLocaleTimeString()
+      $("#panel .value:eq(1)").html(graphic.attributes.Saro);
+
+      $("#panel .value:eq(2)").html(graphic.attributes.Lunation);
+      $("#panel .value:eq(3)").html(graphic.attributes.Gamma);
+      $("#panel .value:eq(4)").html(graphic.attributes.DT + " seconds");
+      $("#panel .value:eq(5)").html(" ");
+      $("#panel .value:eq(6)").html(
+        new Date(graphic.attributes.TimeGE).toLocaleTimeString("en-US", options)
       );
-      $("#panel .value:eq(2)").html(
+      $("#panel .value:eq(7)").html(
         graphic.attributes.DurationSeconds + " seconds"
       );
-      $("#panel .value:eq(3)").html(graphic.attributes.PathWid + " km");
-      $("#panel .value:eq(4)").html(graphic.attributes.EclMagn);
-      $("#panel .value:eq(5)").html(graphic.attributes.SunAlt + "°");
-      $("#panel .value:eq(6)").html(graphic.attributes.SunAzi + "°");
-      $("#panel .value:eq(7)").html(graphic.attributes.Lunation);
-      $("#panel .value:eq(8)").html(graphic.attributes.Saro);
-      $("#panel .value:eq(9)").html(graphic.attributes.Gamma);
-      $("#panel .value:eq(10)").html(graphic.attributes.DT + " seconds");
+      $("#panel .value:eq(8)").html(graphic.attributes.PathWid + " km");
+      $("#panel .value:eq(9)").html(graphic.attributes.EclMagn);
+      $("#panel .value:eq(10)").html(graphic.attributes.SunAlt + "°");
+      $("#panel .value:eq(11)").html(graphic.attributes.SunAzi + "°");
     }
 
     function hideInfomationPanel() {
