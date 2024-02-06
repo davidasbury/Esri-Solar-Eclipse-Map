@@ -46,7 +46,7 @@ require([
 ) {
   $(document).ready(function () {
     // Enforce strict mode
-    "use strict";
+    ("use strict");
 
     // Application constants
     var SOLAR =
@@ -184,6 +184,13 @@ require([
         ],
       }),
     });
+
+    // Define colors for chart
+    var color = d3
+      .scaleOrdinal()
+      .domain(["Total", "Hybrid", "Annular"])
+      .range(["#ff7700", "#f5a61c", "#8f6feb"]);
+
     _view.when(function () {
       $.when(
         downloadData(0, 200),
@@ -249,7 +256,10 @@ require([
       if (!g) {
         d3.selectAll("#chart circle.eclipse")
           .classed("hover", false)
-          .attr("r", 3);
+          .attr("r", 3)
+          .style("fill", function (d) {
+            return color(d.attributes.EclType_simple);
+          });
         hideInfomationPanel();
         return;
       }
@@ -272,6 +282,11 @@ require([
         })
         .attr("r", function (d) {
           return d.attributes.OBJECTID === g.attributes.OBJECTID ? 5 : 3;
+        })
+        .style("fill", function (d) {
+          return d.attributes.OBJECTID === g.attributes.OBJECTID
+            ? "#00ffff"
+            : color(d.attributes.EclType_simple);
         });
     });
 
@@ -426,12 +441,6 @@ require([
         .domain([DURATION_MIN, DURATION_MAX])
         .range([height - margin.top - margin.bottom, 0]);
 
-      // Define colors for chart
-      var color = d3
-        .scaleOrdinal()
-        .domain(["Total", "Hybrid", "Annular"])
-        .range(["#ff7700", "#f5a61c", "#8f6feb"]);
-
       // Define axises
       var xaxis = d3.axisBottom(x).tickFormat(d3.format("d"));
       var yaxis = d3.axisLeft(y).tickValues([0, 200, 400, 600, 800]);
@@ -520,6 +529,15 @@ require([
               // Restore event listening for all dots
               d3.selectAll("#chart circle.eclipse").classed("disabled", false);
             })
+        )
+        // Add a brush
+        .call(
+          d3
+            .brushX() // Add the brush feature using the d3.brush function
+            .extent([
+              [0, 0],
+              [margin.left, margin.top],
+            ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
         );
 
       // Add data dots
@@ -545,18 +563,13 @@ require([
         .style("fill", function (d) {
           return color(d.attributes.EclType_simple);
         })
-        // Add a brush
-        .call(
-          d3
-            .brushX() // Add the brush feature using the d3.brush function
-            .extent([
-              [0, 0],
-              [margin.left, margin.top],
-            ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
-        )
+
         .on("mouseenter", function (d) {
           // Highlight dot
-          d3.select(this).classed("hover", true).attr("r", 5);
+          d3.select(this)
+            .classed("hover", true)
+            .attr("r", 5)
+            .style("fill", "#00ffff");
 
           // Add highlighted eclipse path
           _view.map.findLayerById("highlight").add(
@@ -571,7 +584,12 @@ require([
         })
         .on("mouseleave", function () {
           // Restore dot's color and size
-          d3.select(this).classed("hover", false).attr("r", 3);
+          d3.select(this)
+            .classed("hover", false)
+            .attr("r", 3)
+            .style("fill", function (d) {
+              return color(d.attributes.EclType_simple);
+            });
 
           // Remove highlighted eclipse path
           _view.map.findLayerById("highlight").removeAll();
