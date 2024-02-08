@@ -18,6 +18,7 @@ require([
   "esri/Map",
   "esri/Graphic",
   "esri/geometry/SpatialReference",
+  "esri/geometry/Extent",
   "esri/symbols/FillSymbol3DLayer",
   "esri/symbols/PolygonSymbol3D",
   "esri/renderers/SimpleRenderer",
@@ -33,6 +34,7 @@ require([
   Map,
   Graphic,
   SpatialReference,
+  Extent,
   FillSymbol3DLayer,
   PolygonSymbol3D,
   SimpleRenderer,
@@ -603,11 +605,29 @@ require([
           _currentTime = date.getFullYear();
 
           // Pan to selected graphic
-          _view.goTo({
-            target: d,
-            heading: 0,
-          });
+          if (d.geometry.extent.center.longitude > 0.5) {
+            var new_center = [
+              d.geometry.extent.center.longitude,
+              d.geometry.extent.center.latitude,
+            ];
+          } else if (d.geometry.extent.center.longitude < 0) {
+            var new_center = [
+              d.geometry.extent.center.longitude + 359,
+              d.geometry.extent.center.latitude,
+            ];
+          }
+          // Deal with features that cross the 180º discontinuity
+          else {
+            var new_center = [179.9, d.geometry.extent.center.latitude];
+          }
 
+          _view.goTo({ center: new_center });
+
+          console.log(
+            "view_center: ",
+            _view.center.latitude,
+            _view.center.longitude
+          );
           // Move time pointer
           movePointer();
 
