@@ -623,11 +623,6 @@ require([
 
           _view.goTo({ center: new_center });
 
-          console.log(
-            "view_center: ",
-            _view.center.latitude,
-            _view.center.longitude
-          );
           // Move time pointer
           movePointer();
 
