@@ -28,6 +28,8 @@ require([
   "esri/widgets/BasemapToggle/BasemapToggleViewModel",
   "esri/views/SceneView",
   "esri/renderers/UniqueValueRenderer",
+  "esri/renderers/support/UniqueValueGroup",
+  "esri/renderers/support/UniqueValueClass",
   "dojo/domReady!",
 ], function (
   Map,
@@ -42,7 +44,9 @@ require([
   BasemapToggle,
   BasemapToggleViewModel,
   SceneView,
-  UniqueValueRenderer
+  UniqueValueRenderer,
+  UniqueValueGroup,
+  UniqueValueClass
 ) {
   $(document).ready(function () {
     // Enforce strict mode
@@ -106,46 +110,57 @@ require([
             },
             renderer: new UniqueValueRenderer({
               field: "EclType_simple",
-              defaultSymbol: { type: "simple-fill" }, // autocasts as new SimpleFillSymbol()
-              uniqueValueInfos: [
+              defaultSymbol: {
+                type: "simple-fill",
+                color: "rgba(255, 119, 0, 0.5)",
+              }, // autocasts as new SimpleFillSymbol()
+              uniqueValueGroups: [
                 {
-                  value: "Total",
-                  symbol: {
-                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(255, 119, 0, 0.5)",
-                    //color: "#ff7700",
-                    outline: {
-                      // autocasts as new SimpleLineSymbol()
-                      color: "#ff7700",
-                      width: 0,
+                  heading: "Eclipses",
+                  classes: [
+                    {
+                      lable: "Total",
+                      symbol: {
+                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                        color: "rgba(255, 119, 0, 0.5)",
+                        //color: "#ff7700",
+                        outline: {
+                          // autocasts as new SimpleLineSymbol()
+                          color: "#ff7700",
+                          width: 0,
+                        },
+                      },
+                      values: "Total",
                     },
-                  },
-                },
-                {
-                  value: "Hybrid",
-                  symbol: {
-                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(245, 166, 28, 0.5)",
-                    //color: "#f5a61c",
-                    outline: {
-                      // autocasts as new SimpleLineSymbol()
-                      color: "#f5a61c",
-                      width: 0,
+                    {
+                      label: "Hybrid",
+                      symbol: {
+                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                        color: "rgba(245, 166, 28, 0.5)",
+                        //color: "#f5a61c",
+                        outline: {
+                          // autocasts as new SimpleLineSymbol()
+                          color: "#f5a61c",
+                          width: 0,
+                        },
+                      },
+                      values: "Hybrid",
                     },
-                  },
-                },
-                {
-                  value: "Annular",
-                  symbol: {
-                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(143, 111, 235, 0.5)",
-                    //color: "#8f6feb",
-                    outline: {
-                      // autocasts as new SimpleLineSymbol()
-                      color: "#8f6feb",
-                      width: 0,
+                    {
+                      label: "Annular",
+                      symbol: {
+                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                        color: "rgba(143, 111, 235, 0.5)",
+                        //color: "#8f6feb",
+                        outline: {
+                          // autocasts as new SimpleLineSymbol()
+                          color: "#8f6feb",
+                          width: 0,
+                        },
+                      },
+                      values: "Annular",
                     },
-                  },
+                  ],
                 },
               ],
             }),
@@ -248,6 +263,7 @@ require([
 
       // Clear selection
       _view.map.findLayerById("highlight").removeAll();
+      d3.selectAll("#chart circle.eclipse").style("fill", false);
 
       // Find intersecting path (if any)
       var g = _view.map.findLayerById("solar").graphics.find(function (item) {
@@ -556,15 +572,6 @@ require([
               // Restore event listening for all dots
               d3.selectAll("#chart circle.eclipse").classed("disabled", false);
             })
-        )
-        // Add a brush
-        .call(
-          d3
-            .brushX() // Add the brush feature using the d3.brush function
-            .extent([
-              [0, 0],
-              [margin.left, margin.top],
-            ]) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
         );
 
       // Add data dots
