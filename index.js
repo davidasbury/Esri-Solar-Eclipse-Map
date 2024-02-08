@@ -655,7 +655,10 @@ require([
             var new_center = [179.9, d.geometry.extent.center.latitude];
           }
 
-          _view.goTo({ center: new_center });
+          _view.goTo({
+            center: new_center,
+            heading: 0,
+          });
 
           // Move time pointer
           movePointer();
