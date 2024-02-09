@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <!--
-        Copyright 2016 Esri
+        Copyright 2024 Esri
 
         Licensed under the Apache License, Version 2.0 (the "License");
         you may not use this file except in compliance with the License.
@@ -27,11 +27,9 @@
         href="https://fonts.googleapis.com/css?family=Roboto:400,700|Berkshire+Swash:400">
     <link type="text/css" rel="stylesheet"
         href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link type="text/css" rel="stylesheet" href="https://js.arcgis.com/4.28/esri/css/main.css">
+    <link type="text/css" rel="stylesheet" href="https://js.arcgis.com/4.24/esri/css/main.css">
     <link type="text/css" rel="stylesheet" href="index.css">
-    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="js/d3.min.js"></script>
-    <!-- Configure Dojo first -->
+    <!-- Configure Dojo before loading ArcGIS JSAPI -->
     <script>
         dojoConfig = {
             has: {
@@ -63,11 +61,9 @@
     <!-- Load Dojo, Dijit, and DojoX resources from Google CDN -->
     <script src="https://ajax.googleapis.com/ajax/libs/dojo/1.10.4/dojo/dojo.js"></script>
     <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-
-    <!--<script type="text/javascript" src="https://js.arcgis.com/4.28/"></script>
-    -->
+    <script type="text/javascript" src="js/d3.min.js"></script>
+    <script type="text/javascript" src="https://js.arcgis.com/4.28/"></script>
     <script type="text/javascript" src="index.js"></script>
-
 </head>
 
 <body>

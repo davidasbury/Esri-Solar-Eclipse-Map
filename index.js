@@ -1,5 +1,5 @@
 /*    
-    Copyright 2016 Esri
+    Copyright 2024 Esri
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ require([
   "esri/Map",
   "esri/Graphic",
   "esri/geometry/SpatialReference",
-  "esri/geometry/Extent",
   "esri/symbols/FillSymbol3DLayer",
   "esri/symbols/PolygonSymbol3D",
   "esri/renderers/SimpleRenderer",
@@ -36,7 +35,6 @@ require([
   Map,
   Graphic,
   SpatialReference,
-  Extent,
   FillSymbol3DLayer,
   PolygonSymbol3D,
   SimpleRenderer,
@@ -100,77 +98,17 @@ require([
         },
         starsEnabled: false,
       },
+
       map: new Map({
         basemap: "satellite",
         ground: "world-elevation",
         layers: [
           new GraphicsLayer({
-            // Graphics from this layer will be toggled on/off with the 'visible' property
             id: "solar",
             elevationInfo: {
               mode: "on-the-ground",
             },
-            renderer: new UniqueValueRenderer({
-              field: "EclType_simple",
-              defaultSymbol: {
-                type: "simple-fill",
-                color: "rgba(255, 119, 0, 0.5)",
-              }, // autocasts as new SimpleFillSymbol()
-              uniqueValueGroups: [
-                {
-                  value: "Total",
-                  symbol: {
-                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(245, 166, 28, 0.5)",
-                    //color: "#F5A61C",
-                    outline: {
-                      // autocasts as new SimpleLineSymbol()
-                      color: "#F5A61C",
-                      width: 0,
-                    },
-                  },
-                },
-                {
-                  value: "Hybrid",
-                  symbol: {
-                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(255, 78, 0, 0.5)",
-                    //color: "#FF4E00",
-                    outline: {
-                      // autocasts as new SimpleLineSymbol()
-                      color: "#FF4E00",
-                      width: 0,
-                    },
-                  },
-                },
-                {
-                  value: "Annular",
-                  symbol: {
-                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(143, 111, 235, 0.5)",
-                    //color: "#8F6FEB",
-                    outline: {
-                      // autocasts as new SimpleLineSymbol()
-                      color: "#8f6feb",
-                      width: 0,
-                    },
-                  },
-                },
-              ],
-            }),
-            /*
-            renderer: new SimpleRenderer({
-              symbol: new PolygonSymbol3D({
-                symbolLayers: [
-                  new FillSymbol3DLayer({
-                    material: {
-                      color: "rgba(255, 165, 0, 0.5)",
-                    },
-                  }),
-                ],
-              }),
-            }),
-            */
+            //graphics: [graphics],
           }),
           new GraphicsLayer({
             // This layer will be used to simulate selection
@@ -178,17 +116,6 @@ require([
             elevationInfo: {
               mode: "on-the-ground",
             },
-            renderer: new SimpleRenderer({
-              symbol: new PolygonSymbol3D({
-                symbolLayers: [
-                  new FillSymbol3DLayer({
-                    material: {
-                      color: "rgba(0, 255, 255, 0.5)",
-                    },
-                  }),
-                ],
-              }),
-            }),
           }),
         ],
       }),
@@ -279,6 +206,15 @@ require([
         new Graphic({
           attributes: g.attributes,
           geometry: g.geometry,
+          symbol: new PolygonSymbol3D({
+            symbolLayers: [
+              new FillSymbol3DLayer({
+                material: {
+                  color: "rgba(0, 255, 255, 0.5)",
+                },
+              }),
+            ],
+          }),
         })
       );
 
@@ -604,6 +540,15 @@ require([
             new Graphic({
               attributes: d.attributes,
               geometry: d.geometry,
+              symbol: new PolygonSymbol3D({
+                symbolLayers: [
+                  new FillSymbol3DLayer({
+                    material: {
+                      color: "rgba(0, 255, 255, 0.5)",
+                    },
+                  }),
+                ],
+              }),
             })
           );
 
@@ -663,6 +608,15 @@ require([
             new Graphic({
               attributes: d.attributes,
               geometry: d.geometry,
+              symbol: new PolygonSymbol3D({
+                symbolLayers: [
+                  new FillSymbol3DLayer({
+                    material: {
+                      color: "rgba(0, 255, 255, 0.5)",
+                    },
+                  }),
+                ],
+              }),
             })
           );
 
@@ -730,12 +684,58 @@ require([
         //
         var graphics = [];
         d3.selectAll("#chart circle.eclipse.selected").each(function (d) {
-          graphics.push(
-            new Graphic({
-              attributes: d.attributes,
-              geometry: d.geometry,
-            })
-          );
+          if (d.attributes.EclType_simple == "Total") {
+            graphics.push(
+              new Graphic({
+                attributes: d.attributes,
+                geometry: d.geometry,
+                symbol: {
+                  type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                  color: "rgba(245, 166, 28, 0.5)",
+                  //color: "#F5A61C",
+                  outline: {
+                    // autocasts as new SimpleLineSymbol()
+                    color: "#F5A61C",
+                    width: 0,
+                  },
+                },
+              })
+            );
+          } else if (d.attributes.EclType_simple == "Hybrid") {
+            graphics.push(
+              new Graphic({
+                attributes: d.attributes,
+                geometry: d.geometry,
+                symbol: {
+                  type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                  color: "rgba(255, 78, 0, 0.5)",
+                  //color: "#FF4E00",
+                  outline: {
+                    // autocasts as new SimpleLineSymbol()
+                    color: "#FF4E00",
+                    width: 0,
+                  },
+                },
+              })
+            );
+          } else if (d.attributes.EclType_simple == "Annular") {
+            graphics.push(
+              new Graphic({
+                attributes: d.attributes,
+                geometry: d.geometry,
+                symbol: {
+                  type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                  color: "rgba(143, 111, 235, 0.5)",
+                  //color: "#8F6FEB",
+                  outline: {
+                    // autocasts as new SimpleLineSymbol()
+                    color: "#8F6FEB",
+                    width: 0,
+                  },
+                },
+              })
+            );
+          }
         });
         _view.map.findLayerById("solar").removeAll();
         _view.map.findLayerById("solar").addMany(graphics);

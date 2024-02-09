@@ -1,5 +1,5 @@
 ﻿/*    
-    Copyright 2016 Esri
+    Copyright 2024 Esri
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ html, body {
     width: 200px;
     height:225px;
     right: 0;
-    background-color:rgba(255, 255, 255, 0.1);
+    background-color:rgba(0, 0, 0, 0.3);
     color:white;
     margin-right: -200px;
 }
