@@ -118,51 +118,43 @@ require([
               }, // autocasts as new SimpleFillSymbol()
               uniqueValueGroups: [
                 {
-                  heading: "Eclipses",
-                  classes: [
-                    {
-                      lable: "Total",
-                      symbol: {
-                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                        color: "rgba(255, 119, 0, 0.5)",
-                        //color: "#ff7700",
-                        outline: {
-                          // autocasts as new SimpleLineSymbol()
-                          color: "#ff7700",
-                          width: 0,
-                        },
-                      },
-                      values: "Total",
+                  value: "Total",
+                  symbol: {
+                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                    color: "rgba(245, 166, 28, 0.5)",
+                    //color: "#F5A61C",
+                    outline: {
+                      // autocasts as new SimpleLineSymbol()
+                      color: "#F5A61C",
+                      width: 0,
                     },
-                    {
-                      label: "Hybrid",
-                      symbol: {
-                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                        color: "rgba(245, 166, 28, 0.5)",
-                        //color: "#f5a61c",
-                        outline: {
-                          // autocasts as new SimpleLineSymbol()
-                          color: "#f5a61c",
-                          width: 0,
-                        },
-                      },
-                      values: "Hybrid",
+                  },
+                },
+                {
+                  value: "Hybrid",
+                  symbol: {
+                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                    color: "rgba(255, 78, 0, 0.5)",
+                    //color: "#FF4E00",
+                    outline: {
+                      // autocasts as new SimpleLineSymbol()
+                      color: "#FF4E00",
+                      width: 0,
                     },
-                    {
-                      label: "Annular",
-                      symbol: {
-                        type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                        color: "rgba(143, 111, 235, 0.5)",
-                        //color: "#8f6feb",
-                        outline: {
-                          // autocasts as new SimpleLineSymbol()
-                          color: "#8f6feb",
-                          width: 0,
-                        },
-                      },
-                      values: "Annular",
+                  },
+                },
+                {
+                  value: "Annular",
+                  symbol: {
+                    type: "simple-fill", // autocasts as new SimpleFillSymbol()
+                    color: "rgba(143, 111, 235, 0.5)",
+                    //color: "#8F6FEB",
+                    outline: {
+                      // autocasts as new SimpleLineSymbol()
+                      color: "#8f6feb",
+                      width: 0,
                     },
-                  ],
+                  },
                 },
               ],
             }),
@@ -206,7 +198,7 @@ require([
     var color = d3
       .scaleOrdinal()
       .domain(["Total", "Hybrid", "Annular"])
-      .range(["#ff7700", "#f5a61c", "#8f6feb"]);
+      .range(["#F5A61C", "#FF4E00", "#8F6FEB"]);
 
     _view.when(function () {
       $.when(
