@@ -20,7 +20,7 @@ html, body {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+    font-family: 'Helvetica', 'Arial', sans-serif;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
@@ -53,7 +53,7 @@ html, body {
     right: 100px;
     top: 5px;
     text-align: center;
-    font-family: 'Berkshire Swash', cursive;
+    font-family: 'Helvetica';
     font-size: 34px;
     color: #fff;
     font-weight: 700;
@@ -243,7 +243,7 @@ html, body {
     left: 0;
     top: 55px;
     right:0;
-    font-family: 'Berkshire Swash', cursive;
+    font-family: 'Helvetica';
     font-size: 24px;
 }
 
