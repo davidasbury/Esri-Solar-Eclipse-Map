@@ -114,11 +114,11 @@ require([
                   value: "Total",
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(255, 119, 0, 0.5)",
-                    //color: "#ff7700",
+                    color: "rgba(245, 166, 28, 0.5)",
+                    //color: "#F5A61C",
                     outline: {
                       // autocasts as new SimpleLineSymbol()
-                      color: "#ff7700",
+                      color: "#F5A61C",
                       width: 0,
                     },
                   },
@@ -127,11 +127,11 @@ require([
                   value: "Hybrid",
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
-                    color: "rgba(245, 166, 28, 0.5)",
-                    //color: "#f5a61c",
+                    color: "rgba(255, 78, 0, 0.5)",
+                    //color: "#FF4E00",
                     outline: {
                       // autocasts as new SimpleLineSymbol()
-                      color: "#f5a61c",
+                      color: "#FF4E00",
                       width: 0,
                     },
                   },
@@ -141,7 +141,7 @@ require([
                   symbol: {
                     type: "simple-fill", // autocasts as new SimpleFillSymbol()
                     color: "rgba(143, 111, 235, 0.5)",
-                    //color: "#8f6feb",
+                    //color: "#8F6FEB",
                     outline: {
                       // autocasts as new SimpleLineSymbol()
                       color: "#8f6feb",
@@ -191,7 +191,7 @@ require([
     var color = d3
       .scaleOrdinal()
       .domain(["Total", "Hybrid", "Annular"])
-      .range(["#ff7700", "#f5a61c", "#8f6feb"]);
+      .range(["#F5A61C", "#FF4E00", "#8F6FEB"]);
 
     _view.when(function () {
       $.when(
