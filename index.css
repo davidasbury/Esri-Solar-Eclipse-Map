@@ -54,7 +54,7 @@ html, body {
     top: 5px;
     text-align: center;
     font-family: 'Helvetica';
-    font-size: 28px;
+    font-size: 200%;
     color: #fff;
     font-weight: 700;
     pointer-events: none;
