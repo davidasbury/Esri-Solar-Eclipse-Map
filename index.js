@@ -343,6 +343,8 @@ require([
           "Gamma", // Gamma
           "DT", // Delta-T (seconds)
           "EclType_simple", // Simplified classification
+          "Latitude",
+          "Longitud",
         ],
         orderByFields: ["Date"],
         outSpatialReference: new SpatialReference({
@@ -831,6 +833,7 @@ require([
 
       // Update attributes in panel
       const options = { timeZone: "UTC", timeZoneName: "short" };
+      var minutes = Math.floor(graphic.attributes.DurationSeconds / 60);
       $("#panel .value:eq(0)").html(
         new Date(graphic.attributes.Date).toLocaleDateString("en-US", options)
       );
@@ -840,16 +843,21 @@ require([
       $("#panel .value:eq(3)").html(graphic.attributes.Gamma);
       $("#panel .value:eq(4)").html(graphic.attributes.DT + " seconds");
       $("#panel .value:eq(5)").html(" ");
-      $("#panel .value:eq(6)").html(
+      $("#panel .value:eq(6)").html(graphic.attributes.Latitude + "º");
+      $("#panel .value:eq(7)").html(graphic.attributes.Longitud + "º");
+      $("#panel .value:eq(8)").html(
         new Date(graphic.attributes.TimeGE).toLocaleTimeString("en-US", options)
       );
-      $("#panel .value:eq(7)").html(
-        graphic.attributes.DurationSeconds + " seconds"
+      $("#panel .value:eq(11)").html(
+        minutes +
+          " min " +
+          (graphic.attributes.DurationSeconds - minutes * 60) +
+          " sec"
       );
-      $("#panel .value:eq(8)").html(graphic.attributes.PathWid + " km");
-      $("#panel .value:eq(9)").html(graphic.attributes.EclMagn);
-      $("#panel .value:eq(10)").html(graphic.attributes.SunAlt + "°");
-      $("#panel .value:eq(11)").html(graphic.attributes.SunAzi + "°");
+      $("#panel .value:eq(12)").html(graphic.attributes.PathWid + " km");
+      $("#panel .value:eq(13)").html(graphic.attributes.EclMagn);
+      $("#panel .value:eq(9)").html(graphic.attributes.SunAlt + "°");
+      $("#panel .value:eq(10)").html(graphic.attributes.SunAzi + "°");
     }
 
     function hideInfomationPanel() {

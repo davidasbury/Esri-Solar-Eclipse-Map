@@ -23,9 +23,9 @@
     <meta name="author" content="Esri">
     <meta name="keywords" content="solar, eclipse, penumbra, umbra">
     <meta name="description" content="Mapping and charting 905 solar eclipses from 1601 to 2200">
-    <link type="text/css" rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-    <link type="text/css" rel="stylesheet" href="https://js.arcgis.com/4.28/esri/css/main.css">
+    <script type="module" src="https://js.arcgis.com/calcite-components/2.4.0/calcite.esm.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://js.arcgis.com/calcite-components/2.4.0/calcite.css" />
+    <link type="text/css" rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css">
     <link type="text/css" rel="stylesheet" href="index.css">
     <!-- Configure Dojo before loading ArcGIS JSAPI -->
     <script>
@@ -70,8 +70,12 @@
         <img id='logo' src='img/esri-small.png' alt="Esri logo" />
         <div id='heading'>Eclipse Explorer</div>
         <div id='buttons'>
-            <div id='button-help' class='button'><i class='fa fa-question fa-2x'></i></div>
-            <div id='button-about' class='button'><i class='fa fa-info fa-2x'></i></div>
+            <div id='button-help' class='button'><calcite-icon icon="question" scale='l'
+                    text-label="Label for question">
+                </calcite-icon></div>
+            <div id='button-about' class='button'><calcite-icon icon="information" scale='l'
+                    text-label="Detailed information">
+                </calcite-icon></div>
         </div>
     </div>
     <div id='panel'>
@@ -99,22 +103,18 @@
             </div>
             <div>
                 <div class='value'>‎</div>
-                <div><u>At point of maximum eclipse</u>:</div>
+                <div><u>Point of maximum eclipse</u>:</div>
+            </div>
+            <div>
+                <div class='heading'>Latitude</div>
+                <div class='value'>‎</div>
+            </div>
+            <div>
+                <div class='heading'>Longitude</div>
+                <div class='value'>‎</div>
             </div>
             <div>
                 <div class='heading'>Time</div>
-                <div class='value'>‎</div>
-            </div>
-            <div>
-                <div class='heading'>Duration</div>
-                <div class='value'>‎</div>
-            </div>
-            <div>
-                <div class='heading'>Width</div>
-                <div class='value'></div>
-            </div>
-            <div>
-                <div class='heading'>Magnitude</div>
                 <div class='value'>‎</div>
             </div>
             <div>
@@ -124,6 +124,18 @@
             <div>
                 <div class='heading'>Sun Azimuth</div>
                 <div class='value'></div>
+                <div>
+                    <div class='heading'>Max duration</div>
+                    <div class='value'>‎</div>
+                </div>
+                <div>
+                    <div class='heading'>Max width</div>
+                    <div class='value'></div>
+                </div>
+                <div>
+                    <div class='heading'>Magnitude</div>
+                    <div class='value'>‎</div>
+                </div>
             </div>
 
         </div>
@@ -131,19 +143,22 @@
     <div id='chart'></div>
     <div id='window-help' class='dialog'>
         <div class='dialog-window'>
-            <div class='dialog-banner'>Using Solar Eclipse Map</div>
+            <div class='dialog-banner'>Using the Eclipse Explorer</div>
             <div class='dialog-description'>
                 <p>This application displays all <a href='https://en.wikipedia.org/wiki/Solar_eclipse'>solar
-                        eclipses</a> from 1601 to 2200. This application may take a few seconds to load but once it does
-                    you will see a chart at the bottom of the screen and a striped globe in the center. The chart
-                    contains 905 dots, one dot per eclipse, distributed over a time scale from 1601 to 2200. The thick
-                    red vertical line on the chart is a moveable "time window", only those dots (or eclipses) that fall
-                    inside the window will be rendered on the globe. The time window can be moved side-to-side to render
-                    historic and future exclipse. The time window is 10 years wide.</p>
-                <p>Moving your mouse over any eclipse in the chart will temporary add the eclipse to the globe. The
-                    eclipse path will be colored cyan.</p>
-                <p>Similarly, moving your mouse over paths on the globe will highligh the eclipse's entry in the chart.
-                    Clicking on an eclipse path will launch a popup window with detailed information about the eclipse.
+                        eclipses</a> from 1601 CE to 2200 CE. This application may take a few seconds to load but once
+                    it does
+                    you will see a globe in the center and a chart at the bottom of the screen. The chart
+                    contains 905 dots, one per eclipse, distributed over the dataset's time span. The thick
+                    red vertical line on the chart is a moveable "time window", only the eclipses that fall
+                    inside the window will be rendered on the globe. The time window can be moved side-to-side to view
+                    historic and future eclipses. The time window is 10 years wide.</p>
+                <p>Moving your mouse over any eclipse in the chart will temporary highlight the eclipse on the globe.
+                    The
+                    eclipse may not be visible if the path is on the opposite side of the globe. Clicking a dot will
+                    spin the globe and center the eclipse path.</p>
+                <p>Similarly, clicking a path on the globe will highlight the eclipse's entry in the chart.
+                    A popup window accompanies each eclipse with detailed information about its specific circumstances.
                 </p>
             </div>
             <div class='dialog-buttons'>
@@ -157,17 +172,17 @@
             <div class='dialog-description'>
                 <p>This application was originally designed and developed in 2016 by <a
                         href='https://www.esri.com'>Esri</a>'s <a href='https://blogs.esri.com/esri/apl/'>Applications
-                        Prototype Lab</a> in Redlands, California. Modernization (post-2016) was done by the <a
+                        Prototype Lab</a> in Redlands, California. Modernization (2024) was done by the <a
                         href="https://www.esri.com/en-us/arcgis/products/arcgis-storymaps/overview">ArcGIS StoryMaps
                         Team</a>.
                     The application was built using the following technologies:</p>
                 <ul>
-                    <li><a href='https://developers.arcgis.com/javascript/'>ArcGIS API for JavaScript (v 4.28</a>) by
+                    <li><a href='https://developers.arcgis.com/javascript/'>ArcGIS API for JavaScript (v. 4.28</a>) by
                         Esri</li>
                     <li><a href='https://d3js.org/'>D3.js</a> by <a href='https://bost.ocks.org/mike/'>Mike Bostock</a>
                     </li>
-                    <li><a href='https://fortawesome.github.io/Font-Awesome/'>Font Awesome</a> by <a
-                            href='https://twitter.com/davegandy'>Dave Gandy</a></li>
+                    <li><a href='https://developers.arcgis.com/javascript/latest/calcite-design-system/'>Calcite icons
+                            and components</a> by Esri</a></li>
                     <li><a href='https://jquery.com/'>jQuery</a> by the jQuery Foundation Inc.</li>
                 </ul>
                 <p>Eclipse paths were generated by <a href='https://eclipse-maps.com/Eclipse-Maps/Welcome.html'>Michael
@@ -186,7 +201,8 @@
     </div>
     <div id='window-loading' class='loading'>
         <div class='loading-window'>
-            <div class='loading-spinner'><i class='fa fa-spinner fa-2x fa-pulse'></i></div>
+            <div class='loading-spinner'><calcite-icon icon="spinner" text-label="Loading
+                spinner"> </calcite-icon></div>
             <div class='loading-message'>Downloading data...</div>
         </div>
     </div>
