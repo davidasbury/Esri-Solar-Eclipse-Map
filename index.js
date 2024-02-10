@@ -835,7 +835,7 @@ require([
       const options = { timeZone: "UTC", timeZoneName: "short" };
       var minutes = Math.floor(graphic.attributes.DurationSeconds / 60);
       $("#panel .value:eq(0)").html(
-        new Date(graphic.attributes.Date).toLocaleDateString("en-US", options)
+        new Date(graphic.attributes.Date).toLocaleDateString("en-US")
       );
       $("#panel .value:eq(1)").html(graphic.attributes.Saro);
 
@@ -846,13 +846,13 @@ require([
       $("#panel .value:eq(6)").html(graphic.attributes.Latitude + "º");
       $("#panel .value:eq(7)").html(graphic.attributes.Longitud + "º");
       $("#panel .value:eq(8)").html(
-        new Date(graphic.attributes.TimeGE).toLocaleTimeString("en-US", options)
+        new Date(graphic.attributes.TimeGE).toLocaleTimeString("en-US")
       );
       $("#panel .value:eq(11)").html(
         minutes +
-          " min " +
+          " m " +
           (graphic.attributes.DurationSeconds - minutes * 60) +
-          " sec"
+          " s"
       );
       $("#panel .value:eq(12)").html(graphic.attributes.PathWid + " km");
       $("#panel .value:eq(13)").html(graphic.attributes.EclMagn);
