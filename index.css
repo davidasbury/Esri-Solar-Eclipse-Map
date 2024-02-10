@@ -35,7 +35,7 @@ html, body {
     left: 0;
     top: 0;
     right: 0;
-    height: 50px;
+    height: 40px;
     background-color: rgba(255, 255, 255, 0.1);
     pointer-events:none;
 }
@@ -55,7 +55,7 @@ html, body {
     bottom: 2px;
     text-align: center;
     font-family: 'Helvetica';
-    font-size: 175%;
+    font-size: 150%;
     color: #fff;
     font-weight: 700;
     pointer-events: none;
@@ -69,8 +69,8 @@ html, body {
 
 .button {
     display: inline-block;
-    height: 50px;
-    width: 50px;
+    height: 34px;
+    width: 34px;
     cursor: pointer;
     pointer-events: all;
     background-color: rgba(255, 255, 255, 0.2);
@@ -116,7 +116,7 @@ html, body {
     top: 50px;
     width: 160px;
     right: 0;
-    min-height: 100%;
+    min-height: 24%;
     background-color:rgba(0, 0, 0, 0.3);
     color:white;
     margin-right: -200px;
