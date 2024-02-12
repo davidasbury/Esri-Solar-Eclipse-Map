@@ -419,8 +419,8 @@ require([
         .style("text-anchor", "end")
         .text("Duration (s)");
 
-      /*
-            const brush = d3
+      // create a D3 brush
+      const brush = d3
         .brushX()
         .extent([
           [margin.left, margin.top],
@@ -428,14 +428,16 @@ require([
         ])
         .on("brush", brushed)
         .on("end", brushended);
-      
-      const defaultSelection = [DATE_MIN, DATE_MAX];
-      
+
+      const defaultSelection = [
+        [x(_currentTime), 0],
+        [x(_currentTime + POINTER_WIDTH), 0],
+      ];
+
       const gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
 
       function brushed() {
         if (d3.select("#chart")) {
-  
           svg.dispatch("input");
         }
       }
@@ -444,7 +446,6 @@ require([
           gb.call(brush.move, defaultSelection);
         }
       }
-      */
 
       // Add the pointer
       var dragOffset = 0;
