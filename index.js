@@ -61,10 +61,10 @@ require([
     var MAXALLOWABLEOFFSET = 0.1;
     var DATE_MIN = 1600;
     var DATE_MAX = 2200;
-    var DATE_STA = 2023;
+    var DATE_STA = 1850;
     var DURATION_MIN = 0;
     var DURATION_MAX = 800;
-    var POINTER_WIDTH = 10; // years
+    var POINTER_WIDTH = 20; // years
 
     // Application variables
     var _paths = null;
@@ -420,25 +420,82 @@ require([
         .text("Duration (s)");
 
       // create a D3 brush
+      // start year label
+      var labelL = svg
+        .append("text")
+        .attr("d", "labelleft")
+        .attr("x", 0)
+        .attr("y", height + margin.top);
+      // end year label
+      var labelR = svg
+        .append("text")
+        .attr("Date", "labelright")
+        .attr("x", 0)
+        .attr("y", height + margin.top);
+
       const brush = d3
         .brushX()
         .extent([
           [margin.left, margin.top],
-          [_currentTime, _currentTime + POINTER_WIDTH],
+          [width - margin.right, height - margin.bottom],
         ])
         .on("brush", brushed)
         .on("end", brushended);
 
+      // create a default selection for the brush
       const defaultSelection = [
-        [x(_currentTime), 0],
-        [x(_currentTime + POINTER_WIDTH), 0],
+        x(_currentTime) + margin.left,
+        x(_currentTime) + margin.left + POINTER_WIDTH,
       ];
 
       const gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
 
+      var dragOffset = 0;
       function brushed() {
         if (d3.select("#chart")) {
-          svg.dispatch("input");
+          svg.style("fill", "#569fd5");
+          var s = d3.event.selection;
+          // update and move labels
+          labelL.attr("x", s[0]).text(x.invert(s[0]).toFixed(2));
+          labelR.attr("x", s[1]).text(x.invert(s[1]).toFixed(2));
+          svg.dispatch(drawEclipses()).call(
+            d3
+              .drag()
+              .on("start", function () {
+                // Suppress drag events
+                d3.event.sourceEvent.stopPropagation();
+                d3.event.sourceEvent.preventDefault();
+
+                // Disable dot events
+                d3.selectAll("#chart circle.eclipse").classed("disabled", true);
+
+                //
+                dragOffset =
+                  x.invert(d3.mouse(this.parentNode)[0]) - _currentTime;
+              })
+              .on("drag", function () {
+                _currentTime = x.invert(d3.mouse(this.parentNode)[0]);
+                _currentTime -= dragOffset;
+                if (_currentTime < DATE_MIN) {
+                  _currentTime = DATE_MIN;
+                } else if (_currentTime > DATE_MAX - POINTER_WIDTH) {
+                  _currentTime = DATE_MAX - POINTER_WIDTH;
+                }
+
+                // Move time pointer
+                //movePointer();
+
+                // Draw selected eclipses on globe
+                drawEclipses();
+              })
+              .on("end", function () {
+                // Restore event listening for all dots
+                d3.selectAll("#chart circle.eclipse").classed(
+                  "disabled",
+                  false
+                );
+              })
+          );
         }
       }
       function brushended() {
@@ -447,6 +504,7 @@ require([
         }
       }
 
+      /*
       // Add the pointer
       var dragOffset = 0;
       svg
@@ -457,7 +515,9 @@ require([
         )
         .append("polygon")
         .classed("pointer", true)
-        .attr("transform", $.format("translate({0},{1})", [x(_currentTime), 0]))
+        .attr(
+          "transform",
+          $.format("translate({0},{1})", [x(_currentTime), 0]))
         .attr(
           "points",
           $.format("{0},{1} {2},{3} {4},{5} {6},{7}", [
@@ -506,7 +566,7 @@ require([
               d3.selectAll("#chart circle.eclipse").classed("disabled", false);
             })
         );
-
+*/
       // Add data dots
       svg
         .append("g")
@@ -601,7 +661,7 @@ require([
           });
 
           // Move time pointer
-          movePointer();
+          //movePointer();
 
           // Draw selected eclipses on globe
           drawEclipses();
@@ -639,11 +699,11 @@ require([
         .style("text-anchor", "middle");
 
       // Position the pointer and select graphics
-      movePointer();
+      //movePointer();
 
       // Draw selected eclipses on globe
       drawEclipses();
-
+      /*
       function movePointer() {
         // Clear selection
         hideInfomationPanel();
@@ -675,7 +735,7 @@ require([
             ])
           );
       }
-
+*/
       function drawEclipses() {
         // Highlight eclipses within the pointer
         d3.selectAll("#chart circle.eclipse").classed("selected", function (d) {
