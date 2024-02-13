@@ -30,6 +30,7 @@ require([
   "esri/renderers/UniqueValueRenderer",
   "esri/renderers/support/UniqueValueGroup",
   "esri/renderers/support/UniqueValueClass",
+  "esri/layers/SceneLayer",
   "dojo/domReady!",
 ], function (
   Map,
@@ -46,7 +47,8 @@ require([
   SceneView,
   UniqueValueRenderer,
   UniqueValueGroup,
-  UniqueValueClass
+  UniqueValueClass,
+  SceneLayer
 ) {
   $(document).ready(function () {
     // Enforce strict mode
@@ -64,7 +66,7 @@ require([
     var DATE_STA = 1850;
     var DURATION_MIN = 0;
     var DURATION_MAX = 800;
-    var POINTER_WIDTH = 20; // years
+    var POINTER_WIDTH = 30; // years
 
     // Application variables
     var _paths = null;
@@ -100,7 +102,7 @@ require([
       },
 
       map: new Map({
-        basemap: "satellite",
+        basemap: "navigation-dark-3d",
         ground: "world-elevation",
         layers: [
           new GraphicsLayer({
@@ -240,7 +242,7 @@ require([
       {
         viewModel: new BasemapToggleViewModel({
           view: _view,
-          nextBasemap: "topo-vector",
+          nextBasemap: "satellite",
         }),
       },
       "basemapToggle"
@@ -454,11 +456,11 @@ require([
       function brushed() {
         if (d3.select("#chart")) {
           svg.style("fill", "#569fd5");
-          var s = d3.event.selection;
+          //var s = d3.event.selection;
           // update and move labels
-          labelL.attr("x", s[0]).text(x.invert(s[0]).toFixed(2));
-          labelR.attr("x", s[1]).text(x.invert(s[1]).toFixed(2));
-          svg.dispatch(drawEclipses()).call(
+          //labelL.attr("x", s[0]).text(x.invert(s[0]).toFixed(2));
+          //labelR.attr("x", s[1]).text(x.invert(s[1]).toFixed(2));
+          svg.call(
             d3
               .drag()
               .on("start", function () {
