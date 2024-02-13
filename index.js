@@ -423,9 +423,14 @@ require([
 
       // create a D3 brush
       // start year label
-      var labelL = svg
-        .append("text")
-        .attr("d", "labelleft")
+      /*      var cx = svg.append("g").attr("cx", function (d) {
+        var date = new Date(d.attributes.Date);
+        return x(date.getFullYear());
+      });
+      console.log(cx);
+*/ var labelL = svg
+        .append("g")
+        .attr("cx", "labelleft")
         .attr("x", 0)
         .attr("y", height + margin.top);
       // end year label
