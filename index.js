@@ -423,22 +423,17 @@ require([
 
       // create a D3 brush
       // start year label
-      /*      var cx = svg.append("g").attr("cx", function (d) {
-        var date = new Date(d.attributes.Date);
-        return x(date.getFullYear());
-      });
-      console.log(cx);
-*/ var labelL = svg
-        .append("g")
-        .attr("cx", "labelleft")
+      var labelL = svg
+        .append("text")
+        .attr("id", "labelleft")
         .attr("x", 0)
-        .attr("y", height + margin.top);
+        .attr("y", margin.top);
       // end year label
       var labelR = svg
         .append("text")
-        .attr("Date", "labelright")
+        .attr("id", "labelright")
         .attr("x", 0)
-        .attr("y", height + margin.top);
+        .attr("y", margin.top);
 
       const brush = d3
         .brushX()
@@ -455,17 +450,79 @@ require([
         x(_currentTime) + margin.left + POINTER_WIDTH,
       ];
 
+      // append brush to svg
       const gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
+
+      // add brush handles (from https://bl.ocks.org/Fil/2d43867ba1f36a05459c7113c7f6f98a)
+      var brushResizePath = function (d) {
+        var e = +(d.type == "e"),
+          x = e ? 1 : -1,
+          y = height / 2;
+        return (
+          "M" +
+          0.5 * x +
+          "," +
+          y +
+          "A6,6 0 0 " +
+          e +
+          " " +
+          6.5 * x +
+          "," +
+          (y + 6) +
+          "V" +
+          (2 * y - 6) +
+          "A6,6 0 0 " +
+          e +
+          " " +
+          0.5 * x +
+          "," +
+          2 * y +
+          "Z" +
+          "M" +
+          2.5 * x +
+          "," +
+          (y + 8) +
+          "V" +
+          (2 * y - 8) +
+          "M" +
+          4.5 * x +
+          "," +
+          (y + 8) +
+          "V" +
+          (2 * y - 8)
+        );
+      };
+
+      var handle = gb
+        .selectAll(".handle--custom")
+        .data([{ type: "w" }, { type: "e" }])
+        .enter()
+        .append("path")
+        .attr("class", "handle--custom")
+        .attr("stroke", "#000")
+        .attr("fill", "#eee")
+        .attr("cursor", "ew-resize")
+        .attr("d", brushResizePath);
 
       var dragOffset = 0;
       function brushed() {
         if (d3.select("#chart")) {
+          var s = d3.event.selection;
+          var sx = s.map(x.invert);
           svg.style("fill", "#569fd5");
-          //var s = d3.event.selection;
           // update and move labels
-          //labelL.attr("x", s[0]).text(x.invert(s[0]).toFixed(2));
-          //labelR.attr("x", s[1]).text(x.invert(s[1]).toFixed(2));
-          svg.call(
+          // these are wonky. MUST FIX
+          labelL
+            .attr("x", s[0])
+            .text(Math.floor(x.invert(s[0] - 75)).toFixed(0));
+          labelR
+            .attr("x", s[1])
+            .text(Math.floor(x.invert(s[1] - 74)).toFixed(0));
+          /*          handle.attr("display", null)
+            .attr("transform", function (d, i) {
+              return "translate(" + [s[i], - height / 4] + ")";
+            });
+ */ svg.call(
             d3
               .drag()
               .on("start", function () {
@@ -507,6 +564,7 @@ require([
       }
       function brushended() {
         if (!d3.select("#chart")) {
+          handle.attr("display", "none");
           gb.call(brush.move, defaultSelection);
         }
       }
