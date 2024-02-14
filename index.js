@@ -506,9 +506,9 @@ require([
           [margin.left, margin.top],
           [width - margin.right, height - margin.bottom],
         ])
-        .on("start", brushInit);
-      //       .on("brush", brushed)
-      //       .on("end", brushended);
+        //  .on("start", brushInit);
+        .on("brush", brushed)
+        .on("end", brushended);
 
       // scatterplot working example https://d3-graph-gallery.com/graph/interactivity_brush.html#realgraph
 
