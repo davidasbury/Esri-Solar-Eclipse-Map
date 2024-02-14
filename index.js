@@ -63,10 +63,11 @@ require([
     var MAXALLOWABLEOFFSET = 0.1;
     var DATE_MIN = 1600;
     var DATE_MAX = 2200;
-    var DATE_STA = 1850;
+    var DATE_STA = 2023;
     var DURATION_MIN = 0;
     var DURATION_MAX = 800;
-    var POINTER_WIDTH = 30; // years
+    var INITIAL_BRUSH_WIDTH = 50; // years
+    //    var POINTER_WIDTH = 5; // years (legacy)
 
     // Application variables
     var _paths = null;
@@ -485,7 +486,7 @@ require([
       // create a default selection for the brush
       const defaultSelection = [
         x(_currentTime) + margin.left,
-        x(_currentTime) + margin.left + POINTER_WIDTH,
+        x(_currentTime + INITIAL_BRUSH_WIDTH) + margin.left,
       ];
 
       // append brush to svg
@@ -549,21 +550,20 @@ require([
       function brushed() {
         if (d3.select("#chart")) {
           var s = d3.event.selection;
-          var sx = s.map(x.invert);
           svg.style("fill", "#569fd5");
           // update and move labels
-          // these are wonky. MUST FIX
           labelL
             .attr("x", s[0])
             .text(Math.floor(x.invert(s[0] - 75)).toFixed(0));
           labelR
             .attr("x", s[1])
-            .text(Math.floor(x.invert(s[1] - 74)).toFixed(0));
+            .text(Math.floor(x.invert(s[1] - 75)).toFixed(0));
           /*          handle.attr("display", null)
             .attr("transform", function (d, i) {
               return "translate(" + [s[i], - height / 4] + ")";
             });
- */ svg.call(
+ */
+          svg.call(
             d3
               .drag()
               .on("start", function () {
@@ -583,8 +583,8 @@ require([
                 _currentTime -= dragOffset;
                 if (_currentTime < DATE_MIN) {
                   _currentTime = DATE_MIN;
-                } else if (_currentTime > DATE_MAX - POINTER_WIDTH) {
-                  _currentTime = DATE_MAX - POINTER_WIDTH;
+                } else if (_currentTime > DATE_MAX - INITIAL_BRUSH_WIDTH) {
+                  _currentTime = DATE_MAX - INITIAL_BRUSH_WIDTH;
                 }
 
                 // Move time pointer
@@ -849,7 +849,9 @@ require([
         d3.selectAll("#chart circle.eclipse").classed("brushed", function (d) {
           var date = new Date(d.attributes.Date);
           var year = date.getFullYear();
-          return year >= _currentTime && year <= _currentTime + POINTER_WIDTH;
+          return (
+            year >= _currentTime && year <= _currentTime + INITIAL_BRUSH_WIDTH
+          );
         });
 
         // Draw each eclipse type with a different symbol
