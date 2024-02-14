@@ -506,7 +506,7 @@ require([
           [margin.left, margin.top],
           [width - margin.right, height - margin.bottom],
         ])
-        //  .on("start", brushInit);
+        .on("start", brushInit)
         .on("brush", brushed)
         .on("end", brushended);
 
@@ -519,7 +519,7 @@ require([
       ];
 
       // append brush to svg
-      var gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
+      const gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
 
       // add brush handles (from https://bl.ocks.org/Fil/2d43867ba1f36a05459c7113c7f6f98a)
       // Define handle look
@@ -563,22 +563,29 @@ require([
       };
 
       // Set handle attributes
-      var handle = gb
-        .selectAll(".handle--custom")
-        .data([{ type: "w" }, { type: "e" }])
-        .enter()
-        .append("path")
-        .attr("class", "handle--custom")
-        .attr("stroke", "#000")
-        .attr("fill", "#4682b4")
-        .attr("cursor", "ew-resize")
-        .attr("d", brushResizePath);
+      const handle = svg
+        .append("g")
+
+        .call(brush)
+        .call(brush.move, defaultSelection);
 
       //
       function brushInit() {
         if (d3.select("#chart")) {
           var s = d3.event.selection;
+          // color brush steelblue
           svg.style("fill", "#569fd5");
+          var handle = svg
+            .append("g")
+            .selectAll(".handle--custom")
+            .data([{ type: "w" }, { type: "e" }])
+            .enter()
+            .append("path")
+            .attr("class", "handle--custom")
+            .attr("stroke", "#000")
+            .attr("fill", "#4682b4")
+            .attr("cursor", "ew-resize")
+            .attr("d", brushResizePath);
           // update and move labels
           labelL
             .attr("x", s[0])
@@ -586,12 +593,9 @@ require([
           labelR
             .attr("x", s[1])
             .text(Math.floor(x.invert(s[1] - 75)).toFixed(0));
-          /*         handle
-            .attr("display", null)
-            .attr("transform", function (d, i) {
-              return "translate(" + [s[i], - height / 4] + ")"
-            });
-          */
+          handle.attr("display", null).attr("transform", function (d, i) {
+            return "translate(" + [s[i], -height / 4] + ")";
+          });
         }
       }
 
@@ -608,12 +612,13 @@ require([
           labelR
             .attr("x", s[1])
             .text(Math.floor(x.invert(s[1] - 75)).toFixed(0));
-          /*          handle.attr("display", null)
+          /*          handle
+            .attr("display", null)
             .attr("transform", function (d, i) {
               return "translate(" + [s[i], - height / 4] + ")";
             });
- */
-          svg.call(
+ 
+*/ svg.call(
             d3
               .drag()
               .on("start", function () {
