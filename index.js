@@ -123,12 +123,19 @@ require([
       }),
     });
 
-    // Define colors for chart
-    var color = d3
-      .scaleOrdinal()
-      .domain(["Total", "Hybrid", "Annular"])
-      .range(["#F5A61C", "#FF4E00", "#8F6FEB"]);
+    // add a toggle control to change the basemap
+    var toggle = new BasemapToggle(
+      {
+        viewModel: new BasemapToggleViewModel({
+          view: _view,
+          nextBasemap: "satellite",
+        }),
+      },
+      "basemapToggle"
+    );
+    //toggle.startup();
 
+    // get the data in consecutive calls and concat graphics
     _view.when(function () {
       $.when(
         downloadData(0, 200),
@@ -178,13 +185,15 @@ require([
         );
       });
     });
+
+    // Define what happens when a user clicks on the globe
     _view.on("click", function (e) {
-      // Something is not right. Exit.
+      // Exit if something is not right
       if (!e) {
         return;
       }
 
-      // Clear selection
+      // Clear any previous selections
       _view.map.findLayerById("highlight").removeAll();
       d3.selectAll("#chart circle.eclipse").style("fill", false);
 
@@ -192,6 +201,8 @@ require([
       var g = _view.map.findLayerById("solar").graphics.find(function (item) {
         return item.geometry.contains(e.mapPoint);
       });
+
+      // If nothing is found, restore the state of the chart and hide the info panel
       if (!g) {
         d3.selectAll("#chart circle.eclipse")
           .classed("hover", false)
@@ -203,7 +214,7 @@ require([
         return;
       }
 
-      // Highlight clicked path.
+      // Highlight the clicked eclipse path
       _view.map.findLayerById("highlight").add(
         new Graphic({
           attributes: g.attributes,
@@ -223,7 +234,7 @@ require([
       // Show slide-in info panel.
       showInfomationPanel(g);
 
-      //
+      // define hover state for dots (expand to 5px, color cyan)
       d3.selectAll("#chart circle.eclipse")
         .classed("hover", function (d) {
           return d.attributes.OBJECTID === g.attributes.OBJECTID;
@@ -236,19 +247,35 @@ require([
             ? "#00ffff"
             : color(d.attributes.EclType_simple);
         });
+      //define brushed state for dots (expand to 5px, keep default color)
+      d3.selectAll("#chart circle.eclipse")
+        .classed("brushed", function (d) {
+          return d.attributes.OBJECTID === g.attributes.OBJECTID;
+        })
+        .attr("r", function (d) {
+          return d.attributes.OBJECTID === g.attributes.OBJECTID ? 5 : 3;
+        })
+        .style("fill", function (d) {
+          return d.attributes.OBJECTID === g.attributes.OBJECTID
+            ? color(d.attributes.EclType_simple)
+            : color(d.attributes.EclType_simple);
+        });
+      // define selected/clicked state for dots (expand to 5px, color cyan)
+      d3.selectAll("#chart circle.eclipse")
+        .classed("selected", function (d) {
+          return d.attributes.OBJECTID === g.attributes.OBJECTID;
+        })
+        .attr("r", function (d) {
+          return d.attributes.OBJECTID === g.attributes.OBJECTID ? 5 : 3;
+        })
+        .style("fill", function (d) {
+          return d.attributes.OBJECTID === g.attributes.OBJECTID
+            ? "#00ffff"
+            : color(d.attributes.EclType_simple);
+        });
     });
 
-    var toggle = new BasemapToggle(
-      {
-        viewModel: new BasemapToggleViewModel({
-          view: _view,
-          nextBasemap: "satellite",
-        }),
-      },
-      "basemapToggle"
-    );
-    //toggle.startup();
-
+    // hide the chart when the help information panel is displayed
     $("#button-help").click(function () {
       $("#window-help").fadeIn();
       $("#top").animate(
@@ -273,6 +300,7 @@ require([
       );
     });
 
+    // hide the chart when the 'about' information panel is displayed
     $("#button-about").click(function () {
       $("#window-about").fadeIn();
       $("#top").animate(
@@ -297,6 +325,7 @@ require([
       );
     });
 
+    // bring the chart back when the close button is clicked
     $(".dialog .close").click(function () {
       $(this).parents(".dialog").fadeOut();
       $("#top").animate(
@@ -321,8 +350,10 @@ require([
       );
     });
 
+    // open any hyperlinks in a new browser window
     $("a").attr("target", "_blank");
 
+    // get the data as JSON from the feature service
     function downloadData(start, num) {
       var defer = new $.Deferred();
       var queryObject = new Query({
@@ -360,6 +391,13 @@ require([
       return defer.promise();
     }
 
+    // Define colors for the dots on the chart
+    var color = d3
+      .scaleOrdinal()
+      .domain(["Total", "Hybrid", "Annular"])
+      .range(["#F5A61C", "#FF4E00", "#8F6FEB"]);
+
+    // Draw the D3 chart
     function drawChart() {
       // Remove SVG container (if any)
       d3.select("#chart svg").remove();
@@ -454,6 +492,7 @@ require([
       const gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
 
       // add brush handles (from https://bl.ocks.org/Fil/2d43867ba1f36a05459c7113c7f6f98a)
+      // Define handle look
       var brushResizePath = function (d) {
         var e = +(d.type == "e"),
           x = e ? 1 : -1,
@@ -493,6 +532,7 @@ require([
         );
       };
 
+      // Set handle attributes
       var handle = gb
         .selectAll(".handle--custom")
         .data([{ type: "w" }, { type: "e" }])
@@ -504,6 +544,7 @@ require([
         .attr("cursor", "ew-resize")
         .attr("d", brushResizePath);
 
+      // Define what the brush does
       var dragOffset = 0;
       function brushed() {
         if (d3.select("#chart")) {
@@ -547,7 +588,7 @@ require([
                 }
 
                 // Move time pointer
-                //movePointer();
+                movePointer();
 
                 // Draw selected eclipses on globe
                 drawEclipses();
@@ -570,7 +611,7 @@ require([
       }
 
       /*
-      // Add the pointer
+      // Add the pointer (legacy)
       var dragOffset = 0;
       svg
         .append("g")
@@ -632,7 +673,7 @@ require([
             })
         );
 */
-      // Add data dots
+      // Add data dots to the chart
       svg
         .append("g")
         .attr(
@@ -653,16 +694,16 @@ require([
         })
         .attr("r", 3)
         .style("fill", function (d) {
-          return color(d.attributes.EclType_simple);
+          return color(d.attributes.EclType_simple); // style with hex values from earlier definition
         })
 
+        // Define mouseover
         .on("mouseenter", function (d) {
           // Highlight dot
           d3.select(this)
             .classed("hover", true)
             .attr("r", 5)
             .style("fill", "#00ffff");
-
           // Add highlighted eclipse path
           _view.map.findLayerById("highlight").add(
             new Graphic({
@@ -679,10 +720,11 @@ require([
               }),
             })
           );
-
           //
           showInfomationPanel(d);
         })
+
+        // Define mouseleave
         .on("mouseleave", function () {
           // Restore dot's color and size
           d3.select(this)
@@ -691,19 +733,19 @@ require([
             .style("fill", function (d) {
               return color(d.attributes.EclType_simple);
             });
-
           // Remove highlighted eclipse path
           _view.map.findLayerById("highlight").removeAll();
-
           //
           hideInfomationPanel();
         })
+
+        // Define what clicking on the map will do
         .on("click", function (d) {
-          // Update current time
+          // Update current time (pass this to the brush and update it)
           var date = new Date(d.attributes.Date);
           _currentTime = date.getFullYear();
 
-          // Pan to selected graphic
+          // Get the center of the selected feature
           if (d.geometry.extent.center.longitude > 0.5) {
             var new_center = [
               d.geometry.extent.center.longitude,
@@ -719,19 +761,19 @@ require([
           else {
             var new_center = [179.9, d.geometry.extent.center.latitude];
           }
-
+          // Spin the globe to the newly selected graphic
           _view.goTo({
             center: new_center,
             heading: 0,
           });
 
-          // Move time pointer
+          // Move time pointer (legacy)
           //movePointer();
 
-          // Draw selected eclipses on globe
+          // Draw selected eclipses on the globe
           drawEclipses();
 
-          // Highlight clicked path.
+          // Highlight the clicked path.
           _view.map.findLayerById("highlight").add(
             new Graphic({
               attributes: d.attributes,
@@ -752,7 +794,7 @@ require([
           showInfomationPanel(d);
         });
 
-      // Add year range title
+      /*      // Add year range title (legacy)
       svg
         .append("g")
         .attr(
@@ -763,23 +805,21 @@ require([
         .append("text")
         .style("text-anchor", "middle");
 
-      // Position the pointer and select graphics
+      // Position the pointer and select graphics (legacy)
       //movePointer();
-
-      // Draw selected eclipses on globe
-      drawEclipses();
-      /*
+*/
       function movePointer() {
         // Clear selection
         hideInfomationPanel();
         _view.map.findLayerById("highlight").removeAll();
 
-        // Move red timeline into position
-        d3.select("#chart polygon.pointer").attr(
+        // Move brush into position
+        d3.select(brush).attr(
           "transform",
           $.format("translate({0},{1})", [x(_currentTime), 0])
         );
-
+      }
+      /*
         // Update time window extent text
         //var ccc = $.format('{0}–{1}', [
         //        d3.round(_currentTime),
@@ -801,17 +841,20 @@ require([
           );
       }
 */
+      // Draw selected eclipses on globe
+      drawEclipses();
+
       function drawEclipses() {
-        // Highlight eclipses within the pointer
-        d3.selectAll("#chart circle.eclipse").classed("selected", function (d) {
+        // Select eclipses within the pointer
+        d3.selectAll("#chart circle.eclipse").classed("brushed", function (d) {
           var date = new Date(d.attributes.Date);
           var year = date.getFullYear();
           return year >= _currentTime && year <= _currentTime + POINTER_WIDTH;
         });
 
-        //
+        // Draw each eclipse type with a different symbol
         var graphics = [];
-        d3.selectAll("#chart circle.eclipse.selected").each(function (d) {
+        d3.selectAll("#chart circle.eclipse.brushed").each(function (d) {
           if (d.attributes.EclType_simple == "Total") {
             graphics.push(
               new Graphic({
@@ -870,6 +913,7 @@ require([
       }
     }
 
+    // Define the slide-in info panel
     function showInfomationPanel(graphic) {
       $("#panel").animate(
         {
@@ -882,7 +926,7 @@ require([
         }
       );
 
-      // Update title
+      // Update title with a detailed description of the eclipse type (also in the geodatabase domain)
       switch (graphic.attributes.EclType) {
         case "A":
           $("#panel-title").html("Annular Solar Eclipse");
@@ -905,7 +949,7 @@ require([
           break;
         case "Am":
           $("#panel-title").html(
-            "Annular Solar Eclipse (middle eclipse of Saros)"
+            "Annular Solar Eclipse (longest eclipse of Saros)"
           );
           break;
         case "H":
@@ -925,7 +969,7 @@ require([
           break;
         case "Hm":
           $("#panel-title").html(
-            "Hybrid Solar Eclipse (middle eclipse of Saros)"
+            "Hybrid Solar Eclipse (longest eclipse of Saros)"
           );
           break;
         case "T":
@@ -949,7 +993,7 @@ require([
           break;
         case "Tm":
           $("#panel-title").html(
-            "Total Solar Eclipse (middle eclipse of Saros)"
+            "Total Solar Eclipse (longest eclipse of Saros)"
           );
           break;
         default:
@@ -958,34 +1002,50 @@ require([
       }
 
       // Update attributes in panel
+      // Create options for Date.toLocaleString
       const options = { timeZone: "UTC", timeZoneName: "short" };
+      // Convert total seconds to minutes for eq(12)
       var minutes = Math.floor(graphic.attributes.DurationSeconds / 60);
+      // Calendar date at maximum eclipse (UTC)
       $("#panel .value:eq(0)").html(
         new Date(graphic.attributes.Date).toLocaleDateString("en-US")
       );
+      // Saros cycle
       $("#panel .value:eq(1)").html(graphic.attributes.Saro);
-
+      // Lunation number
       $("#panel .value:eq(2)").html(graphic.attributes.Lunation);
+      // Gamma value
       $("#panel .value:eq(3)").html(graphic.attributes.Gamma);
+      // Delta-t value
       $("#panel .value:eq(4)").html(graphic.attributes.DT + " seconds");
+      // Spacer for formatting table
       $("#panel .value:eq(5)").html(" ");
+      // Latitude at point of maximum eclipse
       $("#panel .value:eq(6)").html(graphic.attributes.Latitude + "º");
+      // Longitude at point of maximum eclipse
       $("#panel .value:eq(7)").html(graphic.attributes.Longitud + "º");
+      // Clock time at point of maximum eclipse (UTC)
       $("#panel .value:eq(8)").html(
         new Date(graphic.attributes.TimeGE).toLocaleTimeString("en-US")
       );
+      // Duration at point of maximum eclipse
       $("#panel .value:eq(11)").html(
         minutes +
           " m " +
           (graphic.attributes.DurationSeconds - minutes * 60) +
           " s"
       );
+      // Width of path a point of maximum eclipse (in km)
       $("#panel .value:eq(12)").html(graphic.attributes.PathWid + " km");
+      // Magnitude at point of maximum eclipse
       $("#panel .value:eq(13)").html(graphic.attributes.EclMagn);
+      // Sun's altitude at point of maximum eclipse
       $("#panel .value:eq(9)").html(graphic.attributes.SunAlt + "°");
+      // Sun's azimuth at point of maximum eclipse
       $("#panel .value:eq(10)").html(graphic.attributes.SunAzi + "°");
     }
 
+    // Hide the info panel
     function hideInfomationPanel() {
       $("#panel").animate(
         {
