@@ -500,25 +500,26 @@ require([
         .attr("x", 0)
         .attr("y", margin.top);
 
-      const brush = d3
+      var brush = d3
         .brushX()
         .extent([
           [margin.left, margin.top],
           [width - margin.right, height - margin.bottom],
         ])
-        .on("brush", brushed)
-        .on("end", brushended);
+        .on("start", brushInit);
+      //       .on("brush", brushed)
+      //       .on("end", brushended);
 
       // scatterplot working example https://d3-graph-gallery.com/graph/interactivity_brush.html#realgraph
 
       // create a default selection for the brush
-      const defaultSelection = [
+      var defaultSelection = [
         x(_currentTime) + margin.left,
         x(_currentTime + INITIAL_BRUSH_WIDTH) + margin.left,
       ];
 
       // append brush to svg
-      const gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
+      var gb = svg.append("g").call(brush).call(brush.move, defaultSelection);
 
       // add brush handles (from https://bl.ocks.org/Fil/2d43867ba1f36a05459c7113c7f6f98a)
       // Define handle look
@@ -572,6 +573,27 @@ require([
         .attr("fill", "#4682b4")
         .attr("cursor", "ew-resize")
         .attr("d", brushResizePath);
+
+      //
+      function brushInit() {
+        if (d3.select("#chart")) {
+          var s = d3.event.selection;
+          svg.style("fill", "#569fd5");
+          // update and move labels
+          labelL
+            .attr("x", s[0])
+            .text(Math.floor(x.invert(s[0] - 75)).toFixed(0));
+          labelR
+            .attr("x", s[1])
+            .text(Math.floor(x.invert(s[1] - 75)).toFixed(0));
+          /*         handle
+            .attr("display", null)
+            .attr("transform", function (d, i) {
+              return "translate(" + [s[i], - height / 4] + ")"
+            });
+          */
+        }
+      }
 
       // Define what the brush does
       var dragOffset = 0;
