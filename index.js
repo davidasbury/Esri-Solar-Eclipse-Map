@@ -569,7 +569,7 @@ require([
         .append("path")
         .attr("class", "handle--custom")
         .attr("stroke", "#000")
-        .attr("fill", "#eee")
+        .attr("fill", "#4682b4")
         .attr("cursor", "ew-resize")
         .attr("d", brushResizePath);
 
