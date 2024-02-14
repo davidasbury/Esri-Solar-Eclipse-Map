@@ -232,6 +232,32 @@ require([
         })
       );
 
+      // Update current time (pass this to the brush and update it)
+      var date = new Date(g.attributes.Date);
+      _currentTime = date.getFullYear();
+
+      // Get the center of the selected feature
+      if (g.geometry.extent.center.longitude > 0.5) {
+        var new_center = [
+          g.geometry.extent.center.longitude,
+          g.geometry.extent.center.latitude,
+        ];
+      } else if (g.geometry.extent.center.longitude < 0) {
+        var new_center = [
+          g.geometry.extent.center.longitude + 359,
+          g.geometry.extent.center.latitude,
+        ];
+      }
+      // Deal with features that cross the 180º discontinuity
+      else {
+        var new_center = [179.9, g.geometry.extent.center.latitude];
+      }
+      // Spin the globe to the newly selected graphic
+      _view.goTo({
+        center: new_center,
+        heading: 0,
+      });
+
       // Show slide-in info panel.
       showInfomationPanel(g);
 
@@ -483,6 +509,8 @@ require([
         .on("brush", brushed)
         .on("end", brushended);
 
+      // scatterplot working example https://d3-graph-gallery.com/graph/interactivity_brush.html#realgraph
+
       // create a default selection for the brush
       const defaultSelection = [
         x(_currentTime) + margin.left,
@@ -699,6 +727,12 @@ require([
 
         // Define mouseover
         .on("mouseenter", function (d) {
+          // clear previously highlighted dots
+          d3.selectAll("#chart circle.eclipse")
+            .attr("r", 3)
+            .style("fill", function (d) {
+              return color(d.attributes.EclType_simple);
+            });
           // Highlight dot
           d3.select(this)
             .classed("hover", true)
@@ -1004,7 +1038,7 @@ require([
       }
 
       // Update attributes in panel
-      // Create options for Date.toLocaleString
+      // options for Date.toLocaleString
       const options = { timeZone: "UTC", timeZoneName: "short" };
       // Convert total seconds to minutes for eq(12)
       var minutes = Math.floor(graphic.attributes.DurationSeconds / 60);
