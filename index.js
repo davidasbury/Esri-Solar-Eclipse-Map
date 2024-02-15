@@ -31,6 +31,9 @@ require([
   "esri/renderers/support/UniqueValueGroup",
   "esri/renderers/support/UniqueValueClass",
   "esri/layers/SceneLayer",
+  "esri/Basemap",
+  "esri/layers/VectorTileLayer",
+  "esri/layers/TileLayer",
   "dojo/domReady!",
 ], function (
   Map,
@@ -48,7 +51,10 @@ require([
   UniqueValueRenderer,
   UniqueValueGroup,
   UniqueValueClass,
-  SceneLayer
+  SceneLayer,
+  Basemap,
+  VectorTileLayer,
+  TileLayer
 ) {
   $(document).ready(function () {
     // Enforce strict mode
@@ -73,6 +79,40 @@ require([
     var _paths = null;
     var _currentTime = DATE_STA;
 
+    // Create a SceneLayer from a URL
+    const labels3D = new SceneLayer({
+      url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_LightLabels_v1/SceneServer",
+    });
+    // Create a VectorTileLayer from a style URL
+    const mapBaseLayer = new VectorTileLayer({
+      url: "https://www.arcgis.com/sharing/rest/content/items/cb38f2afc497482a85579dce4c3ff4ed/resources/styles/root.json",
+    });
+    // Create a Basemap with the VectorTileLayer. The thumbnailUrl will be used for
+    // the image in the BasemapToggle widget.
+    const customBasemap = new Basemap({
+      baseLayers: [mapBaseLayer],
+      referenceLayers: [labels3D],
+      title: "Dark Gray Canvas",
+      id: "DGC",
+      thumbnailUrl:
+        "https://www.arcgis.com/sharing/rest/content/items/4178f71acb934fb89f169e7d667c20c6/info/thumbnail/thumbnail1688765375471.png",
+    });
+
+    // Create a TileLayer from a style URL
+    const satelliteBaseLayer = new TileLayer({
+      url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
+    });
+    // Create a Basemap with the VectorTileLayer. The thumbnailUrl will be used for
+    // the image in the BasemapToggle widget.
+    const customSatelliteBasemap = new Basemap({
+      baseLayers: [satelliteBaseLayer],
+      referenceLayers: [labels3D],
+      title: "custom satellite base",
+      id: "custom_satellite",
+      thumbnailUrl:
+        "https://www.arcgis.com/sharing/rest/content/items/10df2279f9684e4a9f6a7f08febac2a9/info/thumbnail/thumbnail1584118328864.jpeg",
+    });
+
     // Create map and view
     var _view = new SceneView({
       container: "map",
@@ -89,13 +129,13 @@ require([
       },
       center: [-90, 12], // Center the globe
       environment: {
-        // Disable lighting and stars
+        // Disable lighting, atmosphere and stars
         lighting: {
           directShadows: false,
           ambientOcclusion: false,
           cameraTrackingEnabled: true,
         },
-        atmosphereEnabled: true,
+        atmosphereEnabled: false,
         atmosphere: {
           quality: "high",
         },
@@ -103,7 +143,8 @@ require([
       },
 
       map: new Map({
-        basemap: "navigation-dark-3d",
+        basemap: customBasemap,
+        //basemap: "navigation-dark-3d",
         ground: "world-elevation",
         layers: [
           new GraphicsLayer({
@@ -129,7 +170,8 @@ require([
       {
         viewModel: new BasemapToggleViewModel({
           view: _view,
-          nextBasemap: "satellite",
+          nextBasemap: customSatelliteBasemap,
+          //nextBasemap: "satellite",
         }),
       },
       "basemapToggle"
@@ -604,7 +646,7 @@ require([
       function brushed() {
         if (d3.select("#chart")) {
           var s = d3.event.selection;
-          svg.style("fill", "#569fd5");
+          //svg.style("fill", "#569fd5");
           // update and move labels
           labelL
             .attr("x", s[0])
