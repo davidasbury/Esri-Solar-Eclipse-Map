@@ -34,6 +34,7 @@ require([
   "esri/Basemap",
   "esri/layers/VectorTileLayer",
   "esri/layers/TileLayer",
+  "esri/layers/support/LabelClass",
   "dojo/domReady!",
 ], function (
   Map,
@@ -54,7 +55,8 @@ require([
   SceneLayer,
   Basemap,
   VectorTileLayer,
-  TileLayer
+  TileLayer,
+  LabelClass
 ) {
   $(document).ready(function () {
     // Enforce strict mode
@@ -79,9 +81,26 @@ require([
     var _paths = null;
     var _currentTime = DATE_STA;
 
+    // style for 3D billboarded labels
+    var labels3D_style = new LabelClass({
+      symbol: {
+        type: "label-3d",
+        symbolLayers: [
+          {
+            type: "text", // autocasts as new TextSymbol3DLayer()
+            material: { color: [0, 255, 255, 0.3] },
+            size: 42,
+          },
+        ],
+      },
+    });
+
     // Create a SceneLayer from a URL
     const labels3D = new SceneLayer({
       url: "https://basemaps3d.arcgis.com/arcgis/rest/services/OpenStreetMap3D_LightLabels_v1/SceneServer",
+      labelsVisible: true,
+      //labelingInfo: [labels3D_style],
+      opacity: 0.1,
     });
     // Create a VectorTileLayer from a style URL
     const mapBaseLayer = new VectorTileLayer({
@@ -102,12 +121,12 @@ require([
     const satelliteBaseLayer = new TileLayer({
       url: "https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer",
     });
-    // Create a Basemap with the VectorTileLayer. The thumbnailUrl will be used for
+    // Create a Basemap with the TileLayer. The thumbnailUrl will be used for
     // the image in the BasemapToggle widget.
     const customSatelliteBasemap = new Basemap({
       baseLayers: [satelliteBaseLayer],
       referenceLayers: [labels3D],
-      title: "custom satellite base",
+      title: "Custom Satellite Base",
       id: "custom_satellite",
       thumbnailUrl:
         "https://www.arcgis.com/sharing/rest/content/items/10df2279f9684e4a9f6a7f08febac2a9/info/thumbnail/thumbnail1584118328864.jpeg",
