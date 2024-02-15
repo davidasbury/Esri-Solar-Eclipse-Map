@@ -158,7 +158,7 @@ require([
         atmosphere: {
           quality: "high",
         },
-        starsEnabled: false,
+        starsEnabled: true,
       },
 
       map: new Map({
